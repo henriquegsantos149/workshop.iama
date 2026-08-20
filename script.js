@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initLightbox();
   initPhoneValidation();
   initEnrollmentModal();
+  preventOrphans();
 });
 
 // Sticky Header behavior
@@ -181,9 +182,9 @@ function initScrollReveal() {
   });
 }
 
-// Enrollment form simulation
+// Enrollment form handling
 function initEnrollmentForm() {
-  const forms = document.querySelectorAll('#enrollment-form, #hero-enrollment-form');
+  const forms = document.querySelectorAll('#enrollment-form, #hero-registration-form, #hero-enrollment-form, .registration-form');
   if (forms.length === 0) return;
 
   const CHECKOUT_URL = "https://pay.voompcreators.com.br/14992/offer/Yj3SrT";
@@ -192,6 +193,41 @@ function initEnrollmentForm() {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       
+      const phoneInput = form.querySelector('input[type="tel"]');
+      const iti = phoneInput ? phoneInput._iti : null;
+      let cleanPhone = '';
+
+      // Phone validation & sanitization (only raw digits sent)
+      if (phoneInput) {
+        const rawValue = phoneInput.value.trim();
+        if (iti) {
+          const countryData = iti.getSelectedCountryData();
+          if (countryData.iso2 === 'br') {
+            let digits = rawValue.replace(/\D/g, '');
+            if (digits.startsWith('55') && digits.length > 11) {
+              digits = digits.substring(2);
+            }
+            if (digits.length !== 11) {
+              phoneInput.setCustomValidity('Por favor, insira o DDD e o número com 9 dígitos (ex: 11999999999).');
+              phoneInput.reportValidity();
+              return;
+            }
+            // Envia estritamente os dígitos puros sem espaços, traços ou parênteses
+            cleanPhone = '55' + digits;
+          } else {
+            if (!iti.isValidNumber()) {
+              phoneInput.setCustomValidity('Número de telefone inválido para o país selecionado.');
+              phoneInput.reportValidity();
+              return;
+            }
+            const num = iti.getNumber();
+            cleanPhone = num ? num.replace(/\D/g, '') : (countryData.dialCode + rawValue.replace(/\D/g, ''));
+          }
+        } else {
+          cleanPhone = rawValue.replace(/\D/g, '');
+        }
+      }
+
       const submitBtn = form.querySelector('button[type="submit"]');
       if (!submitBtn) return;
 
@@ -202,23 +238,48 @@ function initEnrollmentForm() {
 
       // Capture form data
       const formData = new FormData(form);
+      const name = formData.get('name') || '';
+      const email = formData.get('email') || '';
+      const education = formData.get('education') || formData.get('occupation') || '';
+      const education_area = formData.get('education_area') || '';
+
       const formPayload = {
-        name: formData.get('name'),
-        email: formData.get('email'),
-        whatsapp: formData.get('whatsapp'),
-        education: formData.get('education'),
-        education_area: formData.get('education_area') || ''
+        name,
+        email,
+        phone: cleanPhone,
+        whatsapp: cleanPhone,
+        education,
+        occupation: education,
+        education_area
       };
 
-      // Capture all UTM parameters from the current URL
+      // Capture all UTM parameters from the current URL (both standard and prefixed)
       const urlParams = new URLSearchParams(window.location.search);
       const finalCheckoutUrl = new URL(CHECKOUT_URL);
       
       urlParams.forEach((value, key) => {
+        // Forward all URL params to the checkout URL
+        finalCheckoutUrl.searchParams.append(key, value);
+
+        const upperKey = key.toUpperCase();
         const lowerKey = key.toLowerCase();
+
+        // Exact standard UTM matches
         if (lowerKey.startsWith('utm_')) {
-          finalCheckoutUrl.searchParams.append(key, value);
           formPayload[lowerKey] = value;
+        }
+        
+        // Match prefixed UTMs (e.g. WKIA_UTM_SOURCE, WK_UTM_SOURCE, etc.)
+        if (upperKey.includes('UTM_SOURCE') && !formPayload.utm_source) {
+          formPayload.utm_source = value;
+        } else if (upperKey.includes('UTM_MEDIUM') && !formPayload.utm_medium) {
+          formPayload.utm_medium = value;
+        } else if (upperKey.includes('UTM_CAMPAIGN') && !formPayload.utm_campaign) {
+          formPayload.utm_campaign = value;
+        } else if (upperKey.includes('UTM_CONTENT') && !formPayload.utm_content) {
+          formPayload.utm_content = value;
+        } else if (upperKey.includes('UTM_TERM') && !formPayload.utm_term) {
+          formPayload.utm_term = value;
         }
       });
 
@@ -239,8 +300,7 @@ function initEnrollmentForm() {
         console.error('Error calling subscribe API:', error);
       })
       .finally(() => {
-        // Redireciona para o checkout independentemente do sucesso da API,
-        // para não travar a venda em caso de falha de conexão.
+        // Redireciona para o checkout com os parâmetros UTM
         submitBtn.innerHTML = '<i data-lucide="loader" class="animate-spin"></i> Redirecionando...';
         if (typeof lucide !== 'undefined') lucide.createIcons();
         window.location.href = finalCheckoutUrl.toString();
@@ -345,18 +405,55 @@ function initLightbox() {
   });
 }
 
-// Phone input validation and formatting
+// Phone input validation and formatting with intl-tel-input
 function initPhoneValidation() {
   const phoneInputs = document.querySelectorAll('input[type="tel"]');
   
-  phoneInputs.forEach(input => {
-    // Only allow numbers and limit to 11 digits
-    input.addEventListener('input', (e) => {
-      let value = e.target.value.replace(/\D/g, ''); // Remove all non-digits
-      if (value.length > 11) {
-        value = value.slice(0, 11); // Limit length to 11
+  phoneInputs.forEach(phoneInput => {
+    if (typeof window.intlTelInput === 'undefined') return;
+
+    // Initialize intlTelInput on the input element
+    const iti = window.intlTelInput(phoneInput, {
+      initialCountry: "br",
+      preferredCountries: ["br", "pt", "us", "es", "ao", "mz"],
+      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js",
+    });
+
+    // Attach instance to DOM node
+    phoneInput._iti = iti;
+
+    // Dynamic formatting on input
+    phoneInput.addEventListener('input', (e) => {
+      const countryData = iti.getSelectedCountryData();
+      if (countryData.iso2 === 'br') {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.startsWith('55') && value.length > 11) {
+          value = value.substring(2);
+        }
+        if (value.length > 11) {
+          value = value.substring(0, 11);
+        }
+        
+        let formattedValue = value;
+        if (value.length > 2) {
+          formattedValue = '(' + value.substring(0, 2) + ') ' + value.substring(2);
+        }
+        if (value.length > 7) {
+          formattedValue = '(' + value.substring(0, 2) + ') ' + value.substring(2, 7) + '-' + value.substring(7);
+        }
+        e.target.value = formattedValue;
+      } else {
+        let value = e.target.value.replace(/[^\d+\s-]/g, ''); 
+        e.target.value = value;
       }
-      e.target.value = value;
+      // Reset custom error if typing
+      phoneInput.setCustomValidity('');
+    });
+
+    // Handle country change
+    phoneInput.addEventListener('countrychange', () => {
+      phoneInput.value = '';
+      phoneInput.setCustomValidity('');
     });
   });
 }
@@ -406,6 +503,32 @@ function initEnrollmentModal() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && modal.classList.contains('active')) {
       closeModal();
+    }
+  });
+}
+
+// Prevent orphan words (widows) on typography elements
+function preventOrphans() {
+  const elements = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, .card-subtitle, .section-desc, .hero-subtitle, .card-title, .module-title, .badge-text');
+  
+  elements.forEach(el => {
+    if (el.children.length === 0) {
+      // Simple text-only element
+      el.innerHTML = el.innerHTML.replace(/\s+([^\s]+)\s*$/, '&nbsp;$1');
+    } else {
+      // Element with children, process only the last text node
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+      let lastTextNode = null;
+      let node;
+      while ((node = walker.nextNode())) {
+        if (node.nodeValue.trim() !== '') {
+          lastTextNode = node;
+        }
+      }
+      
+      if (lastTextNode) {
+        lastTextNode.nodeValue = lastTextNode.nodeValue.replace(/\s+([^\s]+)\s*$/, '\u00A0$1');
+      }
     }
   });
 }

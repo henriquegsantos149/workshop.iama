@@ -6,8 +6,10 @@ export default async function handler(req, res) {
   const {
     name,
     email,
+    phone,
     whatsapp,
     education,
+    occupation,
     education_area,
     utm_source,
     utm_medium,
@@ -36,23 +38,32 @@ export default async function handler(req, res) {
   };
 
   const fieldValues = [];
-  addField(fieldValues, '769', education);      // [PERPETUOWORKSHOP][WEBGIS] UTM Possui Graduação
-  addField(fieldValues, '770', education_area); // [PERPETUOWORKSHOP][WEBGIS] UTM Área de Formação
-  addField(fieldValues, '764', utm_source);     // [PERPETUOWORKSHOP][WEBGIS] UTM Source
-  addField(fieldValues, '765', utm_medium);     // [PERPETUOWORKSHOP][WEBGIS] UTM Medium
-  addField(fieldValues, '763', utm_campaign);   // [PERPETUOWORKSHOP][WEBGIS] UTM Campaign
-  addField(fieldValues, '766', utm_content);    // [PERPETUOWORKSHOP][WEBGIS] UTM Content
-  addField(fieldValues, '767', utm_term);       // [PERPETUOWORKSHOP][WEBGIS] UTM Term
+  addField(fieldValues, '769', education || occupation); // [PERPETUOWORKSHOP][WEBGIS] UTM Possui Graduação
+  addField(fieldValues, '770', education_area);          // [PERPETUOWORKSHOP][WEBGIS] UTM Área de Formação
+  addField(fieldValues, '764', utm_source);              // [PERPETUOWORKSHOP][WEBGIS] UTM Source
+  addField(fieldValues, '765', utm_medium);              // [PERPETUOWORKSHOP][WEBGIS] UTM Medium
+  addField(fieldValues, '763', utm_campaign);            // [PERPETUOWORKSHOP][WEBGIS] UTM Campaign
+  addField(fieldValues, '766', utm_content);             // [PERPETUOWORKSHOP][WEBGIS] UTM Content
+  addField(fieldValues, '767', utm_term);                // [PERPETUOWORKSHOP][WEBGIS] UTM Term
   
-  // [PERPETUOWORKSHOP][WEBGIS] UTM Data de Incriçao (ID 768)
+  // [PERPETUOWORKSHOP][WEBGIS] UTM Data de Inscrição (ID 768)
   const currentDateTime = new Date().toISOString();
   addField(fieldValues, '768', currentDateTime);
+
+  // Separate firstName and lastName to cleanly sync in ActiveCampaign
+  const nameParts = (name || '').trim().split(/\s+/);
+  const firstName = nameParts[0] || '';
+  const lastName = nameParts.slice(1).join(' ');
+
+  const rawPhone = (phone || whatsapp || '').toString();
+  const cleanPhone = rawPhone.replace(/\D/g, '');
 
   const contactPayload = {
     contact: {
       email,
-      firstName: name,
-      phone: whatsapp,
+      firstName,
+      lastName,
+      phone: cleanPhone,
       fieldValues
     }
   };
