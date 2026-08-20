@@ -66,6 +66,7 @@ html {
   scroll-behavior: smooth;
   font-size: 16px;
   scroll-padding-top: 80px;
+  overflow-x: hidden;
 }
 
 body {
