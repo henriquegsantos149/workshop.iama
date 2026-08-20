@@ -118,6 +118,7 @@ p,
 .faq-item p {
   color: var(--color-text-muted-light);
   text-wrap: pretty;
+  text-align: justify;
 }
 
 strong {
@@ -637,7 +638,7 @@ a {
 }
 
 .hero-title {
-  font-size: 2.25rem;
+  font-size: 1.75rem;
   font-weight: 800;
   line-height: 1.15;
   margin-bottom: 16px;
@@ -646,12 +647,12 @@ a {
 
 @media (min-width: 768px) {
   .hero-title {
-    font-size: 3.15rem;
+    font-size: 2.5rem;
   }
 }
 
 .hero-subtitle {
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   margin-bottom: 24px;
   line-height: 1.55;
 }
@@ -699,7 +700,7 @@ a {
 }
 
 .social-proof-text {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 /* Mockup Frame */
