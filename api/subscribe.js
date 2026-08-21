@@ -38,17 +38,17 @@ export default async function handler(req, res) {
   };
 
   const fieldValues = [];
-  addField(fieldValues, '769', education || occupation); // [PERPETUOWORKSHOP][WEBGIS] UTM Possui Graduação
-  addField(fieldValues, '770', education_area);          // [PERPETUOWORKSHOP][WEBGIS] UTM Área de Formação
-  addField(fieldValues, '764', utm_source);              // [PERPETUOWORKSHOP][WEBGIS] UTM Source
-  addField(fieldValues, '765', utm_medium);              // [PERPETUOWORKSHOP][WEBGIS] UTM Medium
-  addField(fieldValues, '763', utm_campaign);            // [PERPETUOWORKSHOP][WEBGIS] UTM Campaign
-  addField(fieldValues, '766', utm_content);             // [PERPETUOWORKSHOP][WEBGIS] UTM Content
-  addField(fieldValues, '767', utm_term);                // [PERPETUOWORKSHOP][WEBGIS] UTM Term
+  addField(fieldValues, '874', education || occupation); // [WK][PÓS][IA.MA] UTM Possui Graduação
+  addField(fieldValues, '875', education_area);          // [WK][PÓS][IA.MA] UTM Área de Formação
+  addField(fieldValues, '877', utm_source);              // [WK][PÓS][IA.MA] UTM Source
+  addField(fieldValues, '878', utm_medium);              // [WK][PÓS][IA.MA] UTM Medium
+  addField(fieldValues, '876', utm_campaign);            // [WK][PÓS][IA.MA] UTM Campaign
+  addField(fieldValues, '879', utm_content);             // [WK][PÓS][IA.MA] UTM Content
+  addField(fieldValues, '872', utm_term);                // [WK][PÓS][IA.MA] UTM Term
   
-  // [PERPETUOWORKSHOP][WEBGIS] UTM Data de Inscrição (ID 768)
+  // [WK][PÓS][IA.MA] UTM Data de Inscrição (ID 873)
   const currentDateTime = new Date().toISOString();
-  addField(fieldValues, '768', currentDateTime);
+  addField(fieldValues, '873', currentDateTime);
 
   // Separate firstName and lastName to cleanly sync in ActiveCampaign
   const nameParts = (name || '').trim().split(/\s+/);
@@ -88,11 +88,11 @@ export default async function handler(req, res) {
     const contactData = await contactResponse.json();
     const contactId = contactData.contact.id;
 
-    // 2. Add the [PERPETUOWORKSHOP][WEBGIS] Lead tag (ID: 451)
+    // 2. Add the [WK][PÓS][IA.MA] Lead tag (ID: 477)
     const tagPayload = {
       contactTag: {
         contact: contactId,
-        tag: '451'
+        tag: '477'
       }
     };
 
