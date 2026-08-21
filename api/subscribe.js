@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });
@@ -14,8 +16,10 @@ export default async function handler(req, res) {
     utm_source,
     utm_medium,
     utm_campaign,
+    utm_campaign,
     utm_content,
-    utm_term
+    utm_term,
+    event_id
   } = req.body;
 
   if (!email) {
@@ -109,6 +113,50 @@ export default async function handler(req, res) {
       const errorText = await tagResponse.text();
       console.error('ActiveCampaign Tag Error:', errorText);
       // We still return success since the contact was created, but log the error.
+    }
+
+    // --- META CAPI ---
+    const META_CAPI_ACCESS_TOKEN = process.env.META_CAPI_ACCESS_TOKEN;
+    const META_PIXEL_ID = process.env.META_PIXEL_ID || '1373287802810243';
+
+    if (META_CAPI_ACCESS_TOKEN && event_id) {
+      try {
+        const hashData = (data) => data ? crypto.createHash('sha256').update(data.trim().toLowerCase()).digest('hex') : undefined;
+
+        const clientIp = req.headers['x-forwarded-for'] || req.connection?.remoteAddress || '';
+        const userAgent = req.headers['user-agent'] || '';
+
+        const capiPayload = {
+          data: [
+            {
+              event_name: 'Lead',
+              event_time: Math.floor(Date.now() / 1000),
+              event_id: event_id,
+              action_source: 'website',
+              event_source_url: req.headers.referer || '',
+              user_data: {
+                em: [hashData(email)],
+                ph: cleanPhone ? [hashData('55' + cleanPhone)] : [], // Defaulting to BR country code if missing
+                fn: hashData(firstName),
+                client_ip_address: clientIp.split(',')[0].trim(),
+                client_user_agent: userAgent
+              }
+            }
+          ]
+        };
+
+        const capiResponse = await fetch(`https://graph.facebook.com/v19.0/${META_PIXEL_ID}/events?access_token=${META_CAPI_ACCESS_TOKEN}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(capiPayload)
+        });
+
+        if (!capiResponse.ok) {
+          console.error('Meta CAPI Lead Error:', await capiResponse.text());
+        }
+      } catch (capiError) {
+        console.error('Meta CAPI Exception:', capiError);
+      }
     }
 
     return res.status(200).json({ success: true, message: 'Contact processed successfully' });

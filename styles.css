@@ -656,7 +656,6 @@ a {
   font-size: 0.95rem;
   margin-bottom: 24px;
   line-height: 1.55;
-  text-align: center;
 }
 
 .hero-actions {
@@ -2522,4 +2521,45 @@ a {
 .btn-whatsapp svg {
   width: 20px;
   height: 20px;
+}
+
+/* LGPD Banner */
+.lgpd-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(10, 15, 20, 0.95);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(140, 238, 44, 0.2);
+  z-index: 9999;
+  padding: 20px;
+  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
+  color: var(--color-text-light);
+  display: flex;
+  justify-content: center;
+}
+
+.lgpd-content {
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  text-align: center;
+}
+
+.lgpd-content p {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+  color: var(--color-text-muted-light);
+}
+
+@media (min-width: 768px) {
+  .lgpd-content {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
 }

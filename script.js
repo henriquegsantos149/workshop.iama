@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initPhoneValidation();
   initEnrollmentModal();
   preventOrphans();
+  initLgpdBanner();
+  trackViewContent();
 });
 
 // Sticky Header behavior
@@ -243,6 +245,9 @@ function initEnrollmentForm() {
       const education = formData.get('education') || formData.get('occupation') || '';
       const education_area = formData.get('education_area') || '';
 
+      // Generate unique event ID for Meta CAPI deduplication
+      const eventId = 'lead_' + new Date().getTime() + '_' + Math.floor(Math.random() * 1000);
+
       const formPayload = {
         name,
         email,
@@ -250,8 +255,14 @@ function initEnrollmentForm() {
         whatsapp: cleanPhone,
         education,
         occupation: education,
-        education_area
+        education_area,
+        event_id: eventId
       };
+
+      // Fire Meta Pixel Lead event
+      if (typeof fbq === 'function') {
+        fbq('track', 'Lead', {}, { eventID: eventId });
+      }
 
       // Capture all UTM parameters from the current URL (both standard and prefixed)
       const urlParams = new URLSearchParams(window.location.search);
@@ -531,4 +542,37 @@ function preventOrphans() {
       }
     }
   });
+}
+
+// LGPD Consent Banner Logic
+function initLgpdBanner() {
+  const banner = document.getElementById('lgpd-banner');
+  const acceptBtn = document.getElementById('lgpd-accept');
+  if (!banner || !acceptBtn) return;
+
+  const consent = localStorage.getItem('lgpd_consent');
+  if (!consent) {
+    banner.style.display = 'flex';
+  }
+
+  acceptBtn.addEventListener('click', () => {
+    localStorage.setItem('lgpd_consent', 'true');
+    banner.style.display = 'none';
+  });
+}
+
+// Meta CAPI ViewContent Tracking
+function trackViewContent() {
+  const eventId = 'view_' + new Date().getTime() + '_' + Math.floor(Math.random() * 1000);
+  
+  if (typeof fbq === 'function') {
+    fbq('track', 'ViewContent', {}, { eventID: eventId });
+  }
+
+  // Send to backend CAPI endpoint
+  fetch('/api/meta-capi', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ event_name: 'ViewContent', event_id: eventId })
+  }).catch(e => console.error('Error tracking ViewContent:', e));
 }
