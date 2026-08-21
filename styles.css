@@ -118,7 +118,7 @@ p,
 .faq-item p {
   color: var(--color-text-muted-light);
   text-wrap: pretty;
-  text-align: justify;
+  text-align: left;
 }
 
 strong {
