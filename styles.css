@@ -656,6 +656,7 @@ a {
   font-size: 0.95rem;
   margin-bottom: 24px;
   line-height: 1.55;
+  text-align: center;
 }
 
 .hero-actions {
@@ -2281,6 +2282,7 @@ a {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 600;
+  text-align: center;
 }
 
 .pricing-features {
