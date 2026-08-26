@@ -50,9 +50,9 @@ export default async function handler(req, res) {
   addField(fieldValues, '879', utm_content);             // [WK][PÓS][IA.MA] UTM Content
   addField(fieldValues, '872', utm_term);                // [WK][PÓS][IA.MA] UTM Term
   
-  // [WK][PÓS][IA.MA] UTM Data de Inscrição (ID 873) - Formato estrito YYYY-MM-DD exigido pelo ActiveCampaign
-  const currentDate = new Date().toISOString().split('T')[0];
-  addField(fieldValues, '873', currentDate);
+  // [WK][PÓS][IA.MA] UTM Data de Inscrição (ID 873) - Data e horário completo
+  const currentDateTime = new Date().toISOString();
+  addField(fieldValues, '873', currentDateTime);
 
   // Separate firstName and lastName to cleanly sync in ActiveCampaign
   const nameParts = (name || '').trim().split(/\s+/);
