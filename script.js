@@ -189,7 +189,7 @@ function initEnrollmentForm() {
   const forms = document.querySelectorAll('#enrollment-form, #hero-registration-form, #hero-enrollment-form, .registration-form');
   if (forms.length === 0) return;
 
-  const CHECKOUT_URL = "https://seu-link-de-checkout-aqui.com"; // TODO: Inserir link do checkout aqui
+  const CHECKOUT_URL = "https://pay.voompcreators.com.br/16531/offer/hEFvqm";
 
   forms.forEach(form => {
     form.addEventListener('submit', (e) => {
