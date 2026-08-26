@@ -192,7 +192,7 @@ function initEnrollmentForm() {
   const CHECKOUT_URL = "https://pay.voompcreators.com.br/16531/offer/hEFvqm";
 
   forms.forEach(form => {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const phoneInput = form.querySelector('input[type="tel"]');
@@ -214,7 +214,7 @@ function initEnrollmentForm() {
               phoneInput.reportValidity();
               return;
             }
-            // Envia estritamente os dígitos puros sem espaços, traços ou parênteses
+            // Envia os 11 dígitos puros com DDI 55
             cleanPhone = '55' + digits;
           } else {
             if (!iti.isValidNumber()) {
@@ -240,10 +240,10 @@ function initEnrollmentForm() {
 
       // Capture form data
       const formData = new FormData(form);
-      const name = formData.get('name') || '';
-      const email = formData.get('email') || '';
+      const name = (formData.get('name') || '').trim();
+      const email = (formData.get('email') || '').trim().toLowerCase();
       const education = formData.get('education') || formData.get('occupation') || '';
-      const education_area = formData.get('education_area') || '';
+      const education_area = (formData.get('education_area') || '').trim();
 
       // Generate unique event ID for Meta CAPI deduplication
       const eventId = 'lead_' + new Date().getTime() + '_' + Math.floor(Math.random() * 1000);
@@ -294,28 +294,35 @@ function initEnrollmentForm() {
         }
       });
 
-      // Send to our secure Vercel API
-      fetch('/api/subscribe', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formPayload)
-      })
-      .then(response => {
-        if (!response.ok) {
-          console.error('Failed to subscribe lead to ActiveCampaign');
-        }
-      })
-      .catch(error => {
-        console.error('Error calling subscribe API:', error);
-      })
-      .finally(() => {
-        // Redireciona para o checkout com os parâmetros UTM
+      // Send to serverless API with fallback timeout
+      try {
+        const timeoutPromise = new Promise(resolve => setTimeout(resolve, 2500));
+        const fetchPromise = fetch('/api/subscribe', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formPayload)
+        }).then(async response => {
+          if (!response.ok) {
+            const errText = await response.text();
+            console.error('[Subscribe Error]', response.status, errText);
+          } else {
+            console.log('[Subscribe Success] Lead processado com sucesso');
+          }
+        }).catch(error => {
+          console.error('[Subscribe Exception]', error);
+        });
+
+        // Wait for fetch or maximum 2.5s before redirecting
+        await Promise.race([fetchPromise, timeoutPromise]);
+      } catch (err) {
+        console.error('Erro no envio:', err);
+      } finally {
         submitBtn.innerHTML = '<i data-lucide="loader" class="animate-spin"></i> Redirecionando...';
         if (typeof lucide !== 'undefined') lucide.createIcons();
         window.location.href = finalCheckoutUrl.toString();
-      });
+      }
     });
   });
 }

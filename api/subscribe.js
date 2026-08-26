@@ -16,13 +16,13 @@ export default async function handler(req, res) {
     utm_source,
     utm_medium,
     utm_campaign,
-    utm_campaign,
     utm_content,
     utm_term,
     event_id
   } = req.body;
 
-  if (!email) {
+  const cleanEmail = (email || '').trim().toLowerCase();
+  if (!cleanEmail) {
     return res.status(400).json({ message: 'Email is required' });
   }
 
@@ -30,19 +30,19 @@ export default async function handler(req, res) {
   const API_URL = 'https://ambientalpro.api-us1.com/api/3';
 
   if (!API_KEY) {
-    console.error("ACTIVE_API_KEY is not defined in environment variables");
+    console.error('[API Subscribe] ACTIVE_API_KEY is not defined in environment variables');
     return res.status(500).json({ message: 'Server configuration error' });
   }
 
-  // Helper to add field values conditionally
+  // Helper to add field values conditionally (ignores undefined, null, or empty string)
   const addField = (fieldsArray, fieldId, value) => {
-    if (value) {
-      fieldsArray.push({ field: fieldId, value: value });
+    if (value !== undefined && value !== null && String(value).trim() !== '') {
+      fieldsArray.push({ field: String(fieldId), value: String(value).trim() });
     }
   };
 
   const fieldValues = [];
-  addField(fieldValues, '874', education || occupation); // [WK][PÓS][IA.MA] UTM Possui Graduação
+  addField(fieldValues, '874', education || occupation); // [WK][PÓS][IA.MA] UTM Possui Graduação (sim / nao)
   addField(fieldValues, '875', education_area);          // [WK][PÓS][IA.MA] UTM Área de Formação
   addField(fieldValues, '877', utm_source);              // [WK][PÓS][IA.MA] UTM Source
   addField(fieldValues, '878', utm_medium);              // [WK][PÓS][IA.MA] UTM Medium
@@ -50,27 +50,41 @@ export default async function handler(req, res) {
   addField(fieldValues, '879', utm_content);             // [WK][PÓS][IA.MA] UTM Content
   addField(fieldValues, '872', utm_term);                // [WK][PÓS][IA.MA] UTM Term
   
-  // [WK][PÓS][IA.MA] UTM Data de Inscrição (ID 873)
-  const currentDateTime = new Date().toISOString();
-  addField(fieldValues, '873', currentDateTime);
+  // [WK][PÓS][IA.MA] UTM Data de Inscrição (ID 873) - Formato estrito YYYY-MM-DD exigido pelo ActiveCampaign
+  const currentDate = new Date().toISOString().split('T')[0];
+  addField(fieldValues, '873', currentDate);
 
   // Separate firstName and lastName to cleanly sync in ActiveCampaign
   const nameParts = (name || '').trim().split(/\s+/);
   const firstName = nameParts[0] || '';
   const lastName = nameParts.slice(1).join(' ');
 
-  const rawPhone = (phone || whatsapp || '').toString();
-  const cleanPhone = rawPhone.replace(/\D/g, '');
+  // Sanitize phone and format standard DDI (55)
+  const rawPhone = (phone || whatsapp || '').toString().trim();
+  let digitsOnly = rawPhone.replace(/\D/g, '');
+  let cleanPhone = digitsOnly;
+  if (digitsOnly.length === 10 || digitsOnly.length === 11) {
+    cleanPhone = '55' + digitsOnly;
+  } else if (digitsOnly.startsWith('55') && (digitsOnly.length === 12 || digitsOnly.length === 13)) {
+    cleanPhone = digitsOnly;
+  }
 
   const contactPayload = {
     contact: {
-      email,
+      email: cleanEmail,
       firstName,
       lastName,
       phone: cleanPhone,
       fieldValues
     }
   };
+
+  console.log('[API Subscribe] Sincronizando contato no ActiveCampaign:', {
+    email: cleanEmail,
+    firstName,
+    phone: cleanPhone,
+    fieldsCount: fieldValues.length
+  });
 
   try {
     // 1. Create or sync the contact
@@ -85,34 +99,38 @@ export default async function handler(req, res) {
 
     if (!contactResponse.ok) {
       const errorText = await contactResponse.text();
-      console.error('ActiveCampaign Sync Error:', errorText);
+      console.error('[API Subscribe] Erro no ActiveCampaign Sync:', errorText);
       return res.status(contactResponse.status).json({ message: 'Failed to sync contact', details: errorText });
     }
 
     const contactData = await contactResponse.json();
-    const contactId = contactData.contact.id;
+    const contactId = contactData.contact?.id;
+    console.log('[API Subscribe] Contato sincronizado com sucesso! ID:', contactId);
 
     // 2. Add the [WK][PÓS][IA.MA] Lead tag (ID: 477)
-    const tagPayload = {
-      contactTag: {
-        contact: contactId,
-        tag: '477'
+    if (contactId) {
+      const tagPayload = {
+        contactTag: {
+          contact: contactId,
+          tag: '477'
+        }
+      };
+
+      const tagResponse = await fetch(`${API_URL}/contactTags`, {
+        method: 'POST',
+        headers: {
+          'Api-Token': API_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(tagPayload)
+      });
+
+      if (!tagResponse.ok) {
+        const errorText = await tagResponse.text();
+        console.error('[API Subscribe] Erro ao aplicar Tag no ActiveCampaign:', errorText);
+      } else {
+        console.log('[API Subscribe] Tag 477 aplicada com sucesso!');
       }
-    };
-
-    const tagResponse = await fetch(`${API_URL}/contactTags`, {
-      method: 'POST',
-      headers: {
-        'Api-Token': API_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(tagPayload)
-    });
-
-    if (!tagResponse.ok) {
-      const errorText = await tagResponse.text();
-      console.error('ActiveCampaign Tag Error:', errorText);
-      // We still return success since the contact was created, but log the error.
     }
 
     // --- META CAPI ---
@@ -121,7 +139,7 @@ export default async function handler(req, res) {
 
     if (META_CAPI_ACCESS_TOKEN && event_id) {
       try {
-        const hashData = (data) => data ? crypto.createHash('sha256').update(data.trim().toLowerCase()).digest('hex') : undefined;
+        const hashData = (data) => data ? crypto.createHash('sha256').update(String(data).trim().toLowerCase()).digest('hex') : undefined;
 
         const clientIp = req.headers['x-forwarded-for'] || req.connection?.remoteAddress || '';
         const userAgent = req.headers['user-agent'] || '';
@@ -133,11 +151,11 @@ export default async function handler(req, res) {
               event_time: Math.floor(Date.now() / 1000),
               event_id: event_id,
               action_source: 'website',
-              event_source_url: req.headers.referer || '',
+              event_source_url: req.headers.referer || 'https://curso.ambientalpro.com.br/workshop-ia',
               user_data: {
-                em: [hashData(email)],
-                ph: cleanPhone ? [hashData('55' + cleanPhone)] : [], // Defaulting to BR country code if missing
-                fn: hashData(firstName),
+                em: [hashData(cleanEmail)],
+                ph: cleanPhone ? [hashData(cleanPhone)] : [],
+                fn: firstName ? hashData(firstName) : undefined,
                 client_ip_address: clientIp.split(',')[0].trim(),
                 client_user_agent: userAgent
               }
@@ -152,17 +170,19 @@ export default async function handler(req, res) {
         });
 
         if (!capiResponse.ok) {
-          console.error('Meta CAPI Lead Error:', await capiResponse.text());
+          console.error('[API Subscribe] Meta CAPI Lead Error:', await capiResponse.text());
+        } else {
+          console.log('[API Subscribe] Evento Lead enviado com sucesso para Meta CAPI!');
         }
       } catch (capiError) {
-        console.error('Meta CAPI Exception:', capiError);
+        console.error('[API Subscribe] Meta CAPI Exception:', capiError);
       }
     }
 
-    return res.status(200).json({ success: true, message: 'Contact processed successfully' });
+    return res.status(200).json({ success: true, message: 'Lead gravado com sucesso!' });
 
   } catch (error) {
-    console.error('ActiveCampaign Integration Error:', error);
+    console.error('[API Subscribe] Exceção geral na integração:', error);
     return res.status(500).json({ message: 'Internal Server Error', error: error.message });
   }
 }
