@@ -59,14 +59,12 @@ export default async function handler(req, res) {
   const firstName = nameParts[0] || '';
   const lastName = nameParts.slice(1).join(' ');
 
-  // Sanitize phone and format standard DDI (55)
+  // Sanitize phone (send DDD + number without 55 DDI)
   const rawPhone = (phone || whatsapp || '').toString().trim();
   let digitsOnly = rawPhone.replace(/\D/g, '');
   let cleanPhone = digitsOnly;
-  if (digitsOnly.length === 10 || digitsOnly.length === 11) {
-    cleanPhone = '55' + digitsOnly;
-  } else if (digitsOnly.startsWith('55') && (digitsOnly.length === 12 || digitsOnly.length === 13)) {
-    cleanPhone = digitsOnly;
+  if (digitsOnly.startsWith('55') && (digitsOnly.length === 12 || digitsOnly.length === 13)) {
+    cleanPhone = digitsOnly.substring(2);
   }
 
   const contactPayload = {

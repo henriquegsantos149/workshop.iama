@@ -214,8 +214,8 @@ function initEnrollmentForm() {
               phoneInput.reportValidity();
               return;
             }
-            // Envia os 11 dígitos puros com DDI 55
-            cleanPhone = '55' + digits;
+            // Envia os 11 dígitos puros (DDD + número) sem DDI 55
+            cleanPhone = digits;
           } else {
             if (!iti.isValidNumber()) {
               phoneInput.setCustomValidity('Número de telefone inválido para o país selecionado.');
@@ -226,7 +226,11 @@ function initEnrollmentForm() {
             cleanPhone = num ? num.replace(/\D/g, '') : (countryData.dialCode + rawValue.replace(/\D/g, ''));
           }
         } else {
-          cleanPhone = rawValue.replace(/\D/g, '');
+          let digits = rawValue.replace(/\D/g, '');
+          if (digits.startsWith('55') && digits.length > 11) {
+            digits = digits.substring(2);
+          }
+          cleanPhone = digits;
         }
       }
 
