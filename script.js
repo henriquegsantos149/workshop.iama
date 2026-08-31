@@ -196,42 +196,21 @@ function initEnrollmentForm() {
       e.preventDefault();
       
       const phoneInput = form.querySelector('input[type="tel"]');
-      const iti = phoneInput ? phoneInput._iti : null;
       let cleanPhone = '';
 
-      // Phone validation & sanitization (only raw digits sent)
+      // Phone validation & sanitization (strictly DDD + number, never +55)
       if (phoneInput) {
         const rawValue = phoneInput.value.trim();
-        if (iti) {
-          const countryData = iti.getSelectedCountryData();
-          if (countryData.iso2 === 'br') {
-            let digits = rawValue.replace(/\D/g, '');
-            if (digits.startsWith('55') && digits.length > 11) {
-              digits = digits.substring(2);
-            }
-            if (digits.length !== 11) {
-              phoneInput.setCustomValidity('Por favor, insira o DDD e o número com 9 dígitos (ex: 11999999999).');
-              phoneInput.reportValidity();
-              return;
-            }
-            // Envia os 11 dígitos puros (DDD + número) sem DDI 55
-            cleanPhone = digits;
-          } else {
-            if (!iti.isValidNumber()) {
-              phoneInput.setCustomValidity('Número de telefone inválido para o país selecionado.');
-              phoneInput.reportValidity();
-              return;
-            }
-            const num = iti.getNumber();
-            cleanPhone = num ? num.replace(/\D/g, '') : (countryData.dialCode + rawValue.replace(/\D/g, ''));
-          }
-        } else {
-          let digits = rawValue.replace(/\D/g, '');
-          if (digits.startsWith('55') && digits.length > 11) {
-            digits = digits.substring(2);
-          }
-          cleanPhone = digits;
+        let digits = rawValue.replace(/\D/g, '');
+        if (digits.startsWith('55') && (digits.length === 12 || digits.length === 13)) {
+          digits = digits.substring(2);
         }
+        if (digits.length !== 11) {
+          phoneInput.setCustomValidity('Por favor, insira o DDD e o número com 9 dígitos (ex: 11999999999).');
+          phoneInput.reportValidity();
+          return;
+        }
+        cleanPhone = digits;
       }
 
       const submitBtn = form.querySelector('button[type="submit"]');
@@ -427,55 +406,38 @@ function initLightbox() {
   });
 }
 
-// Phone input validation and formatting with intl-tel-input
+// Brazilian phone input mask and formatting (XX) XXXXX-XXXX
 function initPhoneValidation() {
   const phoneInputs = document.querySelectorAll('input[type="tel"]');
   
   phoneInputs.forEach(phoneInput => {
-    if (typeof window.intlTelInput === 'undefined') return;
-
-    // Initialize intlTelInput on the input element
-    const iti = window.intlTelInput(phoneInput, {
-      initialCountry: "br",
-      preferredCountries: ["br", "pt", "us", "es", "ao", "mz"],
-      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js",
-    });
-
-    // Attach instance to DOM node
-    phoneInput._iti = iti;
-
-    // Dynamic formatting on input
     phoneInput.addEventListener('input', (e) => {
-      const countryData = iti.getSelectedCountryData();
-      if (countryData.iso2 === 'br') {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.startsWith('55') && value.length > 11) {
-          value = value.substring(2);
-        }
-        if (value.length > 11) {
-          value = value.substring(0, 11);
-        }
-        
-        let formattedValue = value;
-        if (value.length > 2) {
-          formattedValue = '(' + value.substring(0, 2) + ') ' + value.substring(2);
-        }
-        if (value.length > 7) {
-          formattedValue = '(' + value.substring(0, 2) + ') ' + value.substring(2, 7) + '-' + value.substring(7);
-        }
-        e.target.value = formattedValue;
-      } else {
-        let value = e.target.value.replace(/[^\d+\s-]/g, ''); 
-        e.target.value = value;
+      let value = e.target.value.replace(/\D/g, "");
+      
+      // If pasted with country code 55 (12 or 13 digits), remove it
+      if (value.startsWith("55") && (value.length === 12 || value.length === 13)) {
+        value = value.substring(2);
       }
-      // Reset custom error if typing
-      phoneInput.setCustomValidity('');
-    });
-
-    // Handle country change
-    phoneInput.addEventListener('countrychange', () => {
-      phoneInput.value = '';
-      phoneInput.setCustomValidity('');
+      
+      // Limit to 11 digits (DDD + 9 digits)
+      if (value.length > 11) {
+        value = value.substring(0, 11);
+      }
+      
+      // Apply mask: (XX) XXXXX-XXXX or (XX) XXXX-XXXX
+      let formatted = value;
+      if (value.length > 0) {
+        formatted = "(" + value;
+      }
+      if (value.length > 2) {
+        formatted = "(" + value.substring(0, 2) + ") " + value.substring(2);
+      }
+      if (value.length > 7) {
+        formatted = "(" + value.substring(0, 2) + ") " + value.substring(2, 7) + "-" + value.substring(7);
+      }
+      
+      e.target.value = formatted;
+      phoneInput.setCustomValidity("");
     });
   });
 }

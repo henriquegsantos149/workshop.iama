@@ -1619,63 +1619,7 @@ a {
   display: none !important;
 }
 
-/* intl-tel-input Custom Dark Theme */
-.iti {
-  width: 100%;
-  position: relative;
-}
 
-.iti__country-list {
-  background-color: #04141d !important;
-  border: 1px solid rgba(140, 238, 44, 0.25) !important;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7) !important;
-  border-radius: var(--radius-sm) !important;
-  color: #fff !important;
-  max-height: 220px !important;
-  z-index: 2500 !important;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-primary) #000d14;
-}
-
-.iti__country {
-  padding: 10px 14px !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  transition: background-color var(--transition-fast);
-}
-
-.iti__country.iti__highlight {
-  background-color: rgba(140, 238, 44, 0.15) !important;
-}
-
-.iti__country-name,
-.iti__dial-code {
-  color: #fff !important;
-  font-family: var(--font-body) !important;
-  font-size: 0.9rem !important;
-}
-
-.iti__dial-code {
-  color: var(--color-accent) !important;
-  font-weight: 600 !important;
-}
-
-.iti__flag-container {
-  padding: 0 4px !important;
-}
-
-.iti__arrow {
-  border-top-color: var(--color-text-muted-light) !important;
-}
-
-.iti__arrow--up {
-  border-bottom-color: var(--color-accent) !important;
-}
-
-.iti--allow-dropdown input,
-.iti--allow-dropdown input[type=text],
-.iti--allow-dropdown input[type=tel] {
-  padding-left: 52px !important;
-}
 
 .btn-glow:hover {
   box-shadow: var(--shadow-glow);
