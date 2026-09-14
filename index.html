@@ -725,6 +725,32 @@
     <img class="lightbox-content" id="lightbox-img" src="" alt="Ampliada">
   </div>
 
+  <!-- Last Day Warning Modal -->
+  <div id="last-day-modal" class="modal">
+    <div class="modal-overlay" id="last-day-overlay"></div>
+    <div class="modal-container">
+      <div class="modal-card glassmorphism" style="max-width: 450px; text-align: center;">
+        <div class="card-glow-top"></div>
+        <button class="modal-close" id="last-day-close" aria-label="Fechar Aviso">
+          <i data-lucide="x"></i>
+        </button>
+
+        <div style="color: var(--color-brand-neon); margin-bottom: 16px;">
+          <i data-lucide="alert-triangle" style="width: 56px; height: 56px; margin: 0 auto;"></i>
+        </div>
+        
+        <h2 class="card-title" style="margin-bottom: 12px; font-size: 2rem;">Último Dia!</h2>
+        <p class="card-subtitle" style="font-size: 1.05rem; margin-bottom: 24px; text-align: center;">
+          Garanta sua vaga no workshop antes do encerramento das vendas!
+        </p>
+
+        <button class="btn btn-primary btn-block btn-lg btn-glow open-modal-btn" id="last-day-cta">
+          Garantir Minha Vaga Agora
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- LGPD Consent Banner -->
   <div id="lgpd-banner" class="lgpd-banner" style="display: none;">
     <div class="lgpd-content">

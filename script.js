@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   preventOrphans();
   initLgpdBanner();
   trackViewContent();
+  initLastDayModal();
 });
 
 // Sticky Header behavior
@@ -548,4 +549,37 @@ function trackViewContent() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ event_name: 'ViewContent', event_id: eventId })
   }).catch(e => console.error('Error tracking ViewContent:', e));
+}
+
+// Last Day Warning Modal
+function initLastDayModal() {
+  const modal = document.getElementById('last-day-modal');
+  const closeBtn = document.getElementById('last-day-close');
+  const overlay = document.getElementById('last-day-overlay');
+  const ctaBtn = document.getElementById('last-day-cta');
+  
+  if (!modal) return;
+
+  const closeModal = () => {
+    modal.classList.remove('active');
+    setTimeout(() => {
+      if (!modal.classList.contains('active')) {
+        modal.style.display = 'none';
+      }
+    }, 300);
+  };
+
+  // Show after 2 seconds if enrollment modal isn't open
+  setTimeout(() => {
+    const enrollmentModal = document.getElementById('enrollment-modal');
+    if (enrollmentModal && enrollmentModal.classList.contains('active')) return;
+    
+    modal.style.display = 'flex';
+    modal.offsetHeight; // Force reflow
+    modal.classList.add('active');
+  }, 2000);
+
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (overlay) overlay.addEventListener('click', closeModal);
+  if (ctaBtn) ctaBtn.addEventListener('click', closeModal);
 }
