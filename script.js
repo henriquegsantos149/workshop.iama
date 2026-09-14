@@ -569,6 +569,16 @@ function initLastDayModal() {
     }, 300);
   };
 
+  // Change text to 'Últimas horas' on Sept 15
+  const titleEl = modal.querySelector('h2.card-title');
+  if (titleEl) {
+    const now = new Date();
+    const targetDate = new Date('2026-09-15T00:00:00');
+    if (now >= targetDate) {
+      titleEl.innerText = 'Últimas horas!';
+    }
+  }
+
   // Show after 2 seconds if enrollment modal isn't open
   setTimeout(() => {
     const enrollmentModal = document.getElementById('enrollment-modal');
