@@ -538,7 +538,7 @@ a {
     linear-gradient(180deg, rgba(12, 15, 25, 0.91) 0%, rgba(12, 15, 25, 0.97) 100%), 
     linear-gradient(rgba(124, 191, 57, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(124, 191, 57, 0.03) 1px, transparent 1px),
-    url('./hero_background.png');
+    url('/hero_background.png');
   background-size: 100% 100%, 45px 45px, 45px 45px, cover;
   background-position: center, center, center, center;
   background-repeat: no-repeat;
