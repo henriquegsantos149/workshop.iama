@@ -2375,16 +2375,16 @@ a {
   font-family: var(--font-title, 'Outfit', sans-serif);
   font-size: 1.25rem;
   font-weight: 800;
-  color: #8cee2c;
+  color: #FFD700;
   line-height: 1;
-  text-shadow: 0 0 10px rgba(140, 238, 44, 0.4);
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
   font-variant-numeric: tabular-nums;
 }
 
 .countdown-lbl {
   font-size: 0.7rem;
   font-weight: 700;
-  color: #8cee2c;
+  color: #FFD700;
   margin-left: 2px;
   text-transform: uppercase;
   opacity: 0.8;
