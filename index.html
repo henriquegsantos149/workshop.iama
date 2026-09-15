@@ -71,6 +71,13 @@
 
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    // Redirecionamento a partir das 23:59 de 15/09/2026
+    var limitDateIndex = new Date('2026-09-15T23:59:00-03:00');
+    if (new Date() >= limitDateIndex) {
+      window.location.replace('https://www.ambientalpro.com.br');
+    }
+  </script>
 </head>
 
 <body>
