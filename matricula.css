@@ -2079,3 +2079,186 @@ a {
   margin-left: auto;
   margin-right: auto;
 }
+
+/* ==========================================
+   MOBILE RESPONSIVENESS FIXES
+   ========================================== */
+.hide-on-desktop {
+  display: none !important;
+}
+
+@media (max-width: 991px) {
+  .hide-on-desktop {
+    display: flex !important;
+  }
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Global Typography Mobile */
+  p {
+    font-size: 16px !important;
+  }
+  .section-title, .hero-title {
+    font-size: 28px !important;
+  }
+
+  /* Hero Section */
+  .hero-section {
+    padding-top: 90px;
+    padding-bottom: 40px;
+  }
+  
+  .hero-container {
+    gap: 16px;
+  }
+
+  /* Hero Highlights Side-by-Side Fix */
+  .hero-highlights {
+    flex-wrap: nowrap;
+    gap: 8px;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  .h-item {
+    padding: 10px 4px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+  }
+  .h-item span {
+    font-size: 0.7rem;
+    white-space: normal;
+    line-height: 1.2;
+  }
+  .h-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Social Proof Mobile - 2 lines */
+  .hero-social-proof {
+    gap: 12px;
+    padding-top: 20px;
+  }
+  .avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    font-size: 0.8rem;
+    border-radius: 10px 0 10px 0;
+  }
+  .social-proof-text {
+    font-size: 0.85rem !important;
+    white-space: normal;
+    line-height: 1.3;
+    text-align: left;
+  }
+
+  .security-text {
+    font-size: 0.75rem !important;
+    white-space: nowrap;
+  }
+
+  /* Validation Card (Diploma) */
+  .cert-card {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 24px !important;
+  }
+  .crea-image-container {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 16px !important;
+  }
+  .crea-image-container img {
+    max-height: 80px !important;
+  }
+
+  /* Footer Mobile */
+  .footer-brand {
+    align-items: center;
+  }
+  .footer-brand p {
+    font-size: 0.8rem !important;
+  }
+
+  /* Registration Card */
+  .registration-card {
+    padding: 24px 16px;
+  }
+  
+  /* Details Grid */
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .detail-card {
+    padding: 24px;
+  }
+  
+  /* Certificates */
+  .cert-card {
+    padding: 24px 16px;
+  }
+  .cert-text h3 {
+    font-size: 1.3rem;
+  }
+
+  /* Carousels & Mentors */
+  .mentor-card {
+    padding: 20px;
+  }
+  .testimonial-card {
+    padding: 24px 16px;
+  }
+  
+  /* VIP & Diagnostic */
+  .vip-card-box {
+    padding: 30px 20px;
+  }
+  .featured-idea-card {
+    padding: 24px;
+  }
+  .gargalo-card {
+    padding: 20px;
+  }
+
+  /* Buttons */
+  .btn {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+  .btn-lg {
+    padding: 14px 24px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .hero-title {
+    font-size: 1.6rem;
+  }
+  
+  /* Override inline styles for pricing on very small screens */
+  .pricing-block > div:nth-child(3) {
+    font-size: 2.5rem !important;
+  }
+  .pricing-block > div:nth-child(3) span:first-child {
+    font-size: 1.3rem !important;
+  }
+  .pricing-block > div:nth-child(3) span:last-child {
+    font-size: 1.4rem !important;
+  }
+  
+  /* Adjust countdown font sizes */
+  #oferta-countdown-container > div {
+    font-size: 1.2rem !important;
+  }
+}
+

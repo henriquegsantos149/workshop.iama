@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initLgpdBanner();
   trackViewContent();
   initLastDayModal();
+  initCarousels();
 });
 
 // Sticky Header behavior
@@ -592,4 +593,104 @@ function initLastDayModal() {
   if (closeBtn) closeBtn.addEventListener('click', closeModal);
   if (overlay) overlay.addEventListener('click', closeModal);
   if (ctaBtn) ctaBtn.addEventListener('click', closeModal);
+}
+
+// Carousels Logic
+function initCarousels() {
+  const setupCarousel = (trackId, prevBtnId, nextBtnId, dotsId, slideClass) => {
+    const track = document.getElementById(trackId);
+    const prevBtn = document.getElementById(prevBtnId);
+    const nextBtn = document.getElementById(nextBtnId);
+    const dotsContainer = document.getElementById(dotsId);
+    if (!track || !prevBtn || !nextBtn || !dotsContainer) return;
+
+    const slides = track.querySelectorAll(slideClass);
+    if (slides.length === 0) return;
+
+    let currentIndex = 0;
+    
+    // Function to calculate how many slides to show based on window width
+    const getVisibleSlides = () => {
+      if (window.innerWidth >= 992) {
+        return slideClass === '.mentor-slide' ? 3 : 2;
+      } else if (window.innerWidth >= 576) {
+        return 2;
+      } else {
+        return 1;
+      }
+    };
+
+    let visibleSlides = getVisibleSlides();
+    let maxIndex = Math.max(0, slides.length - visibleSlides);
+
+    // Create dots
+    const updateDots = () => {
+      dotsContainer.innerHTML = '';
+      for (let i = 0; i <= maxIndex; i++) {
+        const dot = document.createElement('div');
+        dot.classList.add('dot-indicator');
+        if (i === currentIndex) dot.classList.add('active');
+        dot.addEventListener('click', () => {
+          currentIndex = i;
+          updateCarousel();
+        });
+        dotsContainer.appendChild(dot);
+      }
+    };
+
+    const updateCarousel = () => {
+      // Calculate slide width including gap
+      const slideWidth = slides[0].offsetWidth;
+      // The gap is 24px as per CSS (.carousel-track-container { gap: 24px; })
+      const gap = 24; 
+      const moveDistance = (slideWidth + gap) * currentIndex;
+      track.style.transform = `translateX(-${moveDistance}px)`;
+      
+      // Update dots active state
+      Array.from(dotsContainer.children).forEach((dot, index) => {
+        if (index === currentIndex) dot.classList.add('active');
+        else dot.classList.remove('active');
+      });
+      
+      // Update button states
+      prevBtn.style.opacity = currentIndex === 0 ? '0.5' : '1';
+      prevBtn.style.cursor = currentIndex === 0 ? 'default' : 'pointer';
+      nextBtn.style.opacity = currentIndex === maxIndex ? '0.5' : '1';
+      nextBtn.style.cursor = currentIndex === maxIndex ? 'default' : 'pointer';
+    };
+
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateCarousel();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < maxIndex) {
+        currentIndex++;
+        updateCarousel();
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      const newVisibleSlides = getVisibleSlides();
+      if (newVisibleSlides !== visibleSlides) {
+        visibleSlides = newVisibleSlides;
+        maxIndex = Math.max(0, slides.length - visibleSlides);
+        if (currentIndex > maxIndex) currentIndex = maxIndex;
+        updateDots();
+        updateCarousel();
+      } else {
+        updateCarousel();
+      }
+    });
+
+    // Initialize
+    updateDots();
+    updateCarousel();
+  };
+
+  setupCarousel('mentors-track', 'mentors-prev', 'mentors-next', 'mentors-dots', '.mentor-slide');
+  setupCarousel('testimonials-track', 'testimonials-prev', 'testimonials-next', 'testimonials-dots', '.testimonial-slide');
 }
