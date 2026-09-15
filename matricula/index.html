@@ -175,8 +175,43 @@
       </div>
     </section>
 
+    <!-- Passaporte Ouro Section -->
+    <section id="passaporte-ouro" class="section-padding bg-light-layer">
+      <div class="container">
+        <div class="section-header text-center reveal">
+          <div class="badge badge-glow" style="margin-bottom: 16px; display: inline-flex; align-items: center; gap: 8px;">
+            <i data-lucide="crown"></i>
+            <span>Bônus Especial Incluído</span>
+          </div>
+          <h2 class="section-title">Acesso VIP: <span class="gradient-text">Passaporte Ouro</span></h2>
+          <p class="section-desc">Além de garantir sua vaga na Pós-Graduação IA.MA, a sua inscrição de hoje garante acesso total ao seu aprendizado contínuo nos próximos 2 anos.</p>
+        </div>
+        
+        <div class="details-grid reveal delay-1" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+          <!-- Card 1 -->
+          <div class="detail-card glassmorphism">
+            <div class="detail-icon"><i data-lucide="ticket"></i></div>
+            <h3>Eventos Futuros (2026/2027)</h3>
+            <p>Participação 100% garantida ao vivo em todos os congressos online oficiais da Ambiental Pro.</p>
+          </div>
+          <!-- Card 2 -->
+          <div class="detail-card glassmorphism">
+            <div class="detail-icon"><i data-lucide="video"></i></div>
+            <h3>Acervo de Gravações</h3>
+            <p>Acesso imediato e irrestrito às gravações completas de todos os congressos já realizados.</p>
+          </div>
+          <!-- Card 3 -->
+          <div class="detail-card glassmorphism">
+            <div class="detail-icon"><i data-lucide="award"></i></div>
+            <h3>Certificação Dupla</h3>
+            <p>Emissão de certificados sem custos adicionais para cada um dos eventos que você participar.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Details Section -->
-    <section id="detalhes" class="section-padding details-section bg-light-layer">
+    <section id="detalhes" class="section-padding details-section bg-dark-layer">
       <div class="container">
         <div class="section-header text-center reveal">
           <h2 class="section-title">O que você precisa saber sobre a <span class="gradient-text">Pós-Graduação IA.MA</span></h2>
@@ -818,5 +853,47 @@
       setInterval(updateTimer, 1000);
     });
   </script>
+  <!-- Fixed Bottom Bonus Countdown Banner -->
+  <div class="fixed-bonus-banner" id="bonus-countdown-banner">
+    <div class="bonus-banner-container">
+      
+      <!-- Bonus Info Column -->
+      <div class="bonus-banner-info">
+        <div class="bonus-banner-text">
+          <strong class="bonus-banner-highlight">Pós-Graduação IA.MA + Passaporte ouro 2026 e 2027</strong>
+        </div>
+      </div>
+
+      <!-- Controls row (timer + CTA) -->
+      <div class="bonus-banner-controls">
+        <div class="bonus-banner-timer">
+          <span class="timer-label">Encerra em:</span>
+          <div class="countdown-display">
+            <div class="countdown-unit">
+              <span class="countdown-val" id="countdown-hours">00</span>
+              <span class="countdown-lbl">h</span>
+            </div>
+            <span class="countdown-sep">:</span>
+            <div class="countdown-unit">
+              <span class="countdown-val" id="countdown-minutes">00</span>
+              <span class="countdown-lbl">m</span>
+            </div>
+            <span class="countdown-sep">:</span>
+            <div class="countdown-unit">
+              <span class="countdown-val" id="countdown-seconds">00</span>
+              <span class="countdown-lbl">s</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bonus-banner-action">
+          <a href="#hero" class="btn btn-primary btn-glow bonus-banner-btn" id="bonus-banner-cta-btn">
+            <span>Garantir Vaga</span>
+            <i data-lucide="arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

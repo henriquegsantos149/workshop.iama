@@ -694,3 +694,59 @@ function initCarousels() {
   setupCarousel('mentors-track', 'mentors-prev', 'mentors-next', 'mentors-dots', '.mentor-slide');
   setupCarousel('testimonials-track', 'testimonials-prev', 'testimonials-next', 'testimonials-dots', '.testimonial-slide');
 }
+
+// Fixed Bonus Banner Countdown
+(function initCountdownBanner() {
+  const hoursEl = document.getElementById('countdown-hours');
+  const minutesEl = document.getElementById('countdown-minutes');
+  const secondsEl = document.getElementById('countdown-seconds');
+  
+  // Date Logic Check
+  const now = new Date();
+  const cutoffDate = new Date('2026-09-15T23:59:59-03:00');
+  
+  if (now > cutoffDate) {
+    // 1. Hide Fixed Banner
+    const banner = document.getElementById('bonus-countdown-banner');
+    if (banner) banner.style.display = 'none';
+    
+    // 2. Hide Passaporte Ouro Section
+    const passaporteSection = document.getElementById('passaporte-ouro');
+    if (passaporteSection) passaporteSection.style.display = 'none';
+    
+    // 3. Change Detalhes Section to Light/White
+    const detalhesSection = document.getElementById('detalhes');
+    if (detalhesSection) {
+      detalhesSection.classList.remove('bg-dark-layer');
+      detalhesSection.classList.add('bg-light-layer');
+    }
+    
+    return; // Stop execution of the countdown
+  }
+  
+  if (!hoursEl || !minutesEl || !secondsEl) return;
+
+  function updateCountdown() {
+    const currentDate = new Date();
+    const endOfDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59, 999);
+    let diff = endOfDay.getTime() - currentDate.getTime();
+
+    if (diff <= 0) {
+      hoursEl.textContent = '00';
+      minutesEl.textContent = '00';
+      secondsEl.textContent = '00';
+      return;
+    }
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    hoursEl.textContent = String(hours).padStart(2, '0');
+    minutesEl.textContent = String(minutes).padStart(2, '0');
+    secondsEl.textContent = String(seconds).padStart(2, '0');
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+})();
