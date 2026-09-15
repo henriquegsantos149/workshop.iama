@@ -1652,10 +1652,15 @@ a {
 .footer-container {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 40px;
 }
 
 .footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   max-width: 500px;
   margin-left: auto;
