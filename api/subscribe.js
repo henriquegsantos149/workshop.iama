@@ -42,17 +42,17 @@ export default async function handler(req, res) {
   };
 
   const fieldValues = [];
-  addField(fieldValues, '874', education || occupation); // [WK][PÓS][IA.MA] UTM Possui Graduação (sim / nao)
-  addField(fieldValues, '875', education_area);          // [WK][PÓS][IA.MA] UTM Área de Formação
-  addField(fieldValues, '877', utm_source);              // [WK][PÓS][IA.MA] UTM Source
-  addField(fieldValues, '878', utm_medium);              // [WK][PÓS][IA.MA] UTM Medium
-  addField(fieldValues, '876', utm_campaign);            // [WK][PÓS][IA.MA] UTM Campaign
-  addField(fieldValues, '879', utm_content);             // [WK][PÓS][IA.MA] UTM Content
-  addField(fieldValues, '872', utm_term);                // [WK][PÓS][IA.MA] UTM Term
+  addField(fieldValues, '891', education || occupation); // [PERPETUOWORKSHOP][IA] UTM Possui Graduação
+  addField(fieldValues, '892', education_area);          // [PERPETUOWORKSHOP][IA] UTM Área de Formação
+  addField(fieldValues, '894', utm_source);              // [PERPETUOWORKSHOP][IA] UTM Source
+  addField(fieldValues, '895', utm_medium);              // [PERPETUOWORKSHOP][IA] UTM Medium
+  addField(fieldValues, '893', utm_campaign);            // [PERPETUOWORKSHOP][IA] UTM Campaign
+  addField(fieldValues, '888', utm_content);             // [PERPETUOWORKSHOP][IA] UTM Content
+  addField(fieldValues, '889', utm_term);                // [PERPETUOWORKSHOP][IA] UTM Term
   
-  // [WK][PÓS][IA.MA] UTM Data de Inscrição (ID 873) - Data e horário completo
+  // [PERPETUOWORKSHOP][IA] UTM Data de Inscrição (ID 890) - Data e horário completo
   const currentDateTime = new Date().toISOString();
-  addField(fieldValues, '873', currentDateTime);
+  addField(fieldValues, '890', currentDateTime);
 
   // Separate firstName and lastName to cleanly sync in ActiveCampaign
   const nameParts = (name || '').trim().split(/\s+/);
@@ -105,12 +105,12 @@ export default async function handler(req, res) {
     const contactId = contactData.contact?.id;
     console.log('[API Subscribe] Contato sincronizado com sucesso! ID:', contactId);
 
-    // 2. Add the [WK][PÓS][IA.MA] Lead tag (ID: 477)
+    // 2. Add the [PERPETUOWORKSHOP][IA] Lead tag (ID: 484)
     if (contactId) {
       const tagPayload = {
         contactTag: {
           contact: contactId,
-          tag: '477'
+          tag: '484'
         }
       };
 
@@ -127,7 +127,7 @@ export default async function handler(req, res) {
         const errorText = await tagResponse.text();
         console.error('[API Subscribe] Erro ao aplicar Tag no ActiveCampaign:', errorText);
       } else {
-        console.log('[API Subscribe] Tag 477 aplicada com sucesso!');
+        console.log('[API Subscribe] Tag 484 aplicada com sucesso!');
       }
     }
 

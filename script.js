@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
   preventOrphans();
   initLgpdBanner();
   trackViewContent();
-  initLastDayModal();
   initCarousels();
 });
 
