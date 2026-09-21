@@ -190,7 +190,7 @@ function initEnrollmentForm() {
   const forms = document.querySelectorAll('#enrollment-form, #hero-registration-form, #hero-enrollment-form, .registration-form');
   if (forms.length === 0) return;
 
-  const CHECKOUT_URL = "https://pay.voompcreators.com.br/16531/offer/hEFvqm";
+  const CHECKOUT_URL = "https://pay.voompcreators.com.br/0OL0RYRjOIhiJwBj/offer/zuifLN/?cupom=WORKSHOPIA200";
 
   forms.forEach(form => {
     form.addEventListener('submit', async (e) => {
@@ -253,8 +253,8 @@ function initEnrollmentForm() {
       const finalCheckoutUrl = new URL(CHECKOUT_URL);
       
       urlParams.forEach((value, key) => {
-        // Forward all URL params to the checkout URL
-        finalCheckoutUrl.searchParams.append(key, value);
+        // Forward all URL params to the checkout URL (using set to avoid duplicate keys)
+        finalCheckoutUrl.searchParams.set(key, value);
 
         const upperKey = key.toUpperCase();
         const lowerKey = key.toLowerCase();
