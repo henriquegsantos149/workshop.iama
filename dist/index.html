@@ -71,8 +71,8 @@
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <script type="module" crossorigin src="/assets/script-l7DVEBiJ.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/main-DbPNLW5H.css">
+  <script type="module" crossorigin src="/assets/script-BxqPAT5g.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/main-BIp42EBM.css">
 </head>
 
 <body>
@@ -527,11 +527,11 @@
             </div>
 
             <div class="price-box">
-              <span class="old-price">De R$ 497,00</span>
+              <span class="old-price" id="section-old-price">De R$ 497,00</span>
               <div class="current-price">
-                <span class="currency">R$ </span>297,00
+                <span class="currency">R$ </span><span id="section-price-val">297,00</span>
               </div>
-              <span class="price-detail">ou em até 12x de R$ 29,70</span>
+              <span class="price-detail" id="section-price-detail">ou em até 12x de R$ 29,70</span>
             </div>
 
             <div class="pricing-features">
@@ -723,27 +723,101 @@
     <img class="lightbox-content" id="lightbox-img" src="" alt="Ampliada">
   </div>
 
-  <!-- Last Day Warning Modal -->
-  <div id="last-day-modal" class="modal">
-    <div class="modal-overlay" id="last-day-overlay"></div>
+  <!-- Promotional Discount Pop-up Modal -->
+  <div id="promo-modal" class="modal promo-popup-modal">
+    <div class="modal-overlay" id="promo-modal-overlay"></div>
     <div class="modal-container">
-      <div class="modal-card glassmorphism" style="max-width: 450px; text-align: center;">
+      <div class="modal-card promo-modal-card glassmorphism">
         <div class="card-glow-top"></div>
-        <button class="modal-close" id="last-day-close" aria-label="Fechar Aviso">
+        <button class="modal-close" id="promo-modal-close" aria-label="Fechar Promoção">
           <i data-lucide="x"></i>
         </button>
 
-        <div style="color: var(--color-brand-neon); margin-bottom: 16px;">
-          <i data-lucide="alert-triangle" style="width: 56px; height: 56px; margin: 0 auto;"></i>
-        </div>
-        
-        <h2 class="card-title" style="margin-bottom: 12px; font-size: 2rem;">Último Dia!</h2>
-        <p class="card-subtitle" style="font-size: 1.05rem; margin-bottom: 24px; text-align: center;">
-          Garanta sua vaga no workshop antes do encerramento das vendas!
+        <h2 class="promo-modal-title" id="promo-modal-title">
+          Garanta o Workshop IA com <span class="gradient-text" id="promo-discount-title">R$ 200 de Desconto</span>
+        </h2>
+
+        <p class="promo-modal-desc" id="promo-modal-desc">
+          Aproveite o valor promocional exclusivo de <span class="promo-strikethrough">R$ 497,00</span> por apenas <strong class="promo-highlight-price" id="promo-modal-price">R$ 297,00</strong> (ou 12x de <span id="promo-modal-installments">R$ 29,70</span>). Válido até o dia <strong id="promo-modal-date">30/09</strong>!
         </p>
 
-        <button class="btn btn-primary btn-block btn-lg btn-glow open-modal-btn" id="last-day-cta">
-          Garantir Minha Vaga Agora
+        <div class="promo-timer-box">
+          <span class="promo-timer-title" id="promo-timer-label">Tempo restante desta oferta:</span>
+          <div class="promo-countdown-grid" id="promo-popup-countdown">
+            <div class="promo-time-unit">
+              <span class="unit-number" id="popup-days">00</span>
+              <span class="unit-label">Dias</span>
+            </div>
+            <span class="unit-sep">:</span>
+            <div class="promo-time-unit">
+              <span class="unit-number" id="popup-hours">00</span>
+              <span class="unit-label">Horas</span>
+            </div>
+            <span class="unit-sep">:</span>
+            <div class="promo-time-unit">
+              <span class="unit-number" id="popup-minutes">00</span>
+              <span class="unit-label">Min</span>
+            </div>
+            <span class="unit-sep">:</span>
+            <div class="promo-time-unit">
+              <span class="unit-number" id="popup-seconds">00</span>
+              <span class="unit-label">Seg</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="promo-modal-actions">
+          <button class="btn btn-primary btn-block btn-lg btn-glow" id="promo-modal-cta">
+            <span id="promo-btn-text">Garantir R$ 200 de Desconto</span>
+            <i data-lucide="arrow-right"></i>
+          </button>
+          <span class="promo-guarantee-note">
+            <i data-lucide="shield-check"></i> Inscrição 100% Segura • Certificado Incluso
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fixed Bottom Promotion Countdown Banner -->
+  <div id="promo-fixed-banner" class="promo-fixed-banner">
+    <div class="promo-banner-container">
+      <div class="promo-banner-info">
+        <div class="promo-banner-text">
+          <span class="promo-banner-highlight" id="banner-text-highlight">Valor Promocional até 30/09:</span>
+          <span class="promo-banner-pricing" id="banner-pricing">De <del>R$ 497</del> por apenas <strong>R$ 297</strong> (ou 12x de R$ 29,70)</span>
+        </div>
+      </div>
+
+      <div class="promo-banner-controls">
+        <div class="promo-banner-timer">
+          <span class="banner-timer-label">Encerra em:</span>
+          <div class="banner-countdown" id="banner-countdown">
+            <div class="b-unit">
+              <span class="b-val" id="banner-days">00</span>
+              <span class="b-lbl">d</span>
+            </div>
+            <span class="b-sep">:</span>
+            <div class="b-unit">
+              <span class="b-val" id="banner-hours">00</span>
+              <span class="b-lbl">h</span>
+            </div>
+            <span class="b-sep">:</span>
+            <div class="b-unit">
+              <span class="b-val" id="banner-minutes">00</span>
+              <span class="b-lbl">m</span>
+            </div>
+            <span class="b-sep">:</span>
+            <div class="b-unit">
+              <span class="b-val" id="banner-seconds">00</span>
+              <span class="b-lbl">s</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-sm promo-banner-btn" id="promo-banner-cta">
+          <span id="banner-btn-text">Garantir Desconto</span>
+          <i data-lucide="arrow-right"></i>
         </button>
       </div>
     </div>

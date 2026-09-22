@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initLightbox();
   initPhoneValidation();
   initEnrollmentModal();
+  initPromotionManager();
   preventOrphans();
   initLgpdBanner();
   trackViewContent();
@@ -190,8 +191,6 @@ function initEnrollmentForm() {
   const forms = document.querySelectorAll('#enrollment-form, #hero-registration-form, #hero-enrollment-form, .registration-form');
   if (forms.length === 0) return;
 
-  const CHECKOUT_URL = "https://pay.voompcreators.com.br/0OL0RYRjOIhiJwBj/offer/zuifLN/?cupom=WORKSHOPIA200";
-
   forms.forEach(form => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -250,7 +249,8 @@ function initEnrollmentForm() {
 
       // Capture all UTM parameters from the current URL (both standard and prefixed)
       const urlParams = new URLSearchParams(window.location.search);
-      const finalCheckoutUrl = new URL(CHECKOUT_URL);
+      const activePromo = getCurrentPromo();
+      const finalCheckoutUrl = new URL(activePromo.checkoutUrl);
       
       urlParams.forEach((value, key) => {
         // Forward all URL params to the checkout URL (using set to avoid duplicate keys)
@@ -551,48 +551,7 @@ function trackViewContent() {
   }).catch(e => console.error('Error tracking ViewContent:', e));
 }
 
-// Last Day Warning Modal
-function initLastDayModal() {
-  const modal = document.getElementById('last-day-modal');
-  const closeBtn = document.getElementById('last-day-close');
-  const overlay = document.getElementById('last-day-overlay');
-  const ctaBtn = document.getElementById('last-day-cta');
-  
-  if (!modal) return;
 
-  const closeModal = () => {
-    modal.classList.remove('active');
-    setTimeout(() => {
-      if (!modal.classList.contains('active')) {
-        modal.style.display = 'none';
-      }
-    }, 300);
-  };
-
-  // Change text to 'Últimas horas' on Sept 15
-  const titleEl = modal.querySelector('h2.card-title');
-  if (titleEl) {
-    const now = new Date();
-    const targetDate = new Date('2026-09-15T00:00:00');
-    if (now >= targetDate) {
-      titleEl.innerText = 'Últimas horas!';
-    }
-  }
-
-  // Show after 2 seconds if enrollment modal isn't open
-  setTimeout(() => {
-    const enrollmentModal = document.getElementById('enrollment-modal');
-    if (enrollmentModal && enrollmentModal.classList.contains('active')) return;
-    
-    modal.style.display = 'flex';
-    modal.offsetHeight; // Force reflow
-    modal.classList.add('active');
-  }, 2000);
-
-  if (closeBtn) closeBtn.addEventListener('click', closeModal);
-  if (overlay) overlay.addEventListener('click', closeModal);
-  if (ctaBtn) ctaBtn.addEventListener('click', closeModal);
-}
 
 // Carousels Logic
 function initCarousels() {
@@ -694,58 +653,222 @@ function initCarousels() {
   setupCarousel('testimonials-track', 'testimonials-prev', 'testimonials-next', 'testimonials-dots', '.testimonial-slide');
 }
 
-// Fixed Bonus Banner Countdown
-(function initCountdownBanner() {
-  const hoursEl = document.getElementById('countdown-hours');
-  const minutesEl = document.getElementById('countdown-minutes');
-  const secondsEl = document.getElementById('countdown-seconds');
-  
-  // Date Logic Check
-  const now = new Date();
-  const cutoffDate = new Date('2026-09-15T23:59:59-03:00');
-  
-  if (now > cutoffDate) {
-    // 1. Hide Fixed Banner
-    const banner = document.getElementById('bonus-countdown-banner');
-    if (banner) banner.style.display = 'none';
-    
-    // 2. Hide Passaporte Ouro Section
-    const passaporteSection = document.getElementById('passaporte-ouro');
-    if (passaporteSection) passaporteSection.style.display = 'none';
-    
-    // 3. Change Detalhes Section to Light/White
-    const detalhesSection = document.getElementById('detalhes');
-    if (detalhesSection) {
-      detalhesSection.classList.remove('bg-dark-layer');
-      detalhesSection.classList.add('bg-light-layer');
-    }
-    
-    return; // Stop execution of the countdown
-  }
-  
-  if (!hoursEl || !minutesEl || !secondsEl) return;
+// ==========================================================================
+// Promotional Campaign Manager (Dynamic phases, Pop-up & Fixed Banner)
+// ==========================================================================
 
-  function updateCountdown() {
-    const currentDate = new Date();
-    const endOfDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59, 999);
-    let diff = endOfDay.getTime() - currentDate.getTime();
+const PROMO_CONFIG = {
+  phase1: {
+    // Until 30/09 23:59:59 Brasília Time (UTC-3)
+    deadline: new Date('2026-09-30T23:59:59-03:00'),
+    discountAmount: '200',
+    discountFormatted: 'R$ 200',
+    priceOriginal: '497,00',
+    priceCurrent: '297,00',
+    installments: 'R$ 29,70',
+    dateLabel: '30/09',
+    badgeText: '⚡ CONDIÇÃO ESPECIAL DE LANÇAMENTO',
+    titleDiscount: 'R$ 200 de Desconto',
+    modalDescHtml: 'Aproveite o valor promocional exclusivo de <span class="promo-strikethrough">R$ 497,00</span> por apenas <strong class="promo-highlight-price">R$ 297,00</strong> (ou 12x de R$ 29,70). Válido até o dia <strong>30/09</strong>!',
+    modalCtaText: 'Garantir R$ 200 de Desconto',
+    bannerTagText: 'R$ 200 OFF',
+    bannerHighlightText: 'Valor Promocional até 30/09:',
+    bannerPricingHtml: 'De <del>R$ 497</del> por apenas <strong>R$ 297</strong> (ou 12x de R$ 29,70)',
+    bannerBtnText: 'Garantir Desconto',
+    checkoutUrl: 'https://pay.voompcreators.com.br/0OL0RYRjOIhiJwBj/offer/zuifLN/?cupom=WORKSHOPIA200'
+  },
+  phase2: {
+    // From 01/10 00:00:00 to 07/10 23:59:59 Brasília Time (UTC-3)
+    deadline: new Date('2026-10-07T23:59:59-03:00'),
+    discountAmount: '100',
+    discountFormatted: 'R$ 100',
+    priceOriginal: '497,00',
+    priceCurrent: '397,00',
+    installments: 'R$ 39,70',
+    dateLabel: '07/10',
+    badgeText: '⚡ SEGUNDO LOTE PROMOCIONAL',
+    titleDiscount: 'R$ 100 de Desconto',
+    modalDescHtml: 'Aproveite o valor promocional de <span class="promo-strikethrough">R$ 497,00</span> por apenas <strong class="promo-highlight-price">R$ 397,00</strong> (ou 12x de R$ 39,70). Válido até o dia <strong>07/10</strong>!',
+    modalCtaText: 'Garantir R$ 100 de Desconto',
+    bannerTagText: 'R$ 100 OFF',
+    bannerHighlightText: 'Valor Promocional até 07/10:',
+    bannerPricingHtml: 'De <del>R$ 497</del> por apenas <strong>R$ 397</strong> (ou 12x de R$ 39,70)',
+    bannerBtnText: 'Garantir Desconto',
+    checkoutUrl: 'https://pay.voompcreators.com.br/0OL0RYRjOIhiJwBj/offer/zuifLN?cupom=WORKSHOPIA100'
+  }
+};
+
+function getCurrentPromo() {
+  const now = new Date();
+  if (now <= PROMO_CONFIG.phase1.deadline) {
+    return { phase: 1, ...PROMO_CONFIG.phase1 };
+  } else if (now <= PROMO_CONFIG.phase2.deadline) {
+    return { phase: 2, ...PROMO_CONFIG.phase2 };
+  } else {
+    return { phase: 3, expired: true, ...PROMO_CONFIG.phase2 };
+  }
+}
+
+function initPromotionManager() {
+  const promoModal = document.getElementById('promo-modal');
+  const promoBanner = document.getElementById('promo-fixed-banner');
+  const enrollmentModal = document.getElementById('enrollment-modal');
+  
+  const currentPromo = getCurrentPromo();
+
+  // If promotion completely expired after Oct 7th
+  if (currentPromo.expired) {
+    if (promoBanner) promoBanner.style.display = 'none';
+    if (promoModal) promoModal.style.display = 'none';
+    return;
+  }
+
+  // 1. Update Promo Modal Content
+  if (promoModal) {
+    const discountTitleEl = document.getElementById('promo-discount-title');
+    const descEl = document.getElementById('promo-modal-desc');
+    const btnTextEl = document.getElementById('promo-btn-text');
+    const closeBtn = document.getElementById('promo-modal-close');
+    const overlay = document.getElementById('promo-modal-overlay');
+    const ctaBtn = document.getElementById('promo-modal-cta');
+
+    if (discountTitleEl) discountTitleEl.textContent = currentPromo.titleDiscount;
+    if (descEl) descEl.innerHTML = currentPromo.modalDescHtml;
+    if (btnTextEl) btnTextEl.textContent = currentPromo.modalCtaText;
+
+    const openModal = () => {
+      // Don't open if enrollment modal is already open
+      if (enrollmentModal && enrollmentModal.classList.contains('active')) return;
+      promoModal.style.display = 'flex';
+      promoModal.offsetHeight; // Force reflow
+      promoModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    };
+
+    const closeModal = () => {
+      promoModal.classList.remove('active');
+      document.body.style.overflow = '';
+      setTimeout(() => {
+        if (!promoModal.classList.contains('active')) {
+          promoModal.style.display = 'none';
+        }
+      }, 300);
+    };
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (overlay) overlay.addEventListener('click', closeModal);
+    
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && promoModal.classList.contains('active')) {
+        closeModal();
+      }
+    });
+
+    if (ctaBtn) {
+      ctaBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeModal();
+        // Trigger enrollment modal
+        setTimeout(() => {
+          if (enrollmentModal) {
+            enrollmentModal.style.display = 'flex';
+            enrollmentModal.offsetHeight;
+            enrollmentModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+          }
+        }, 150);
+      });
+    }
+
+    // Automatically open modal once user enters the page (after short 600ms delay)
+    setTimeout(() => {
+      openModal();
+    }, 600);
+  }
+
+  // 2. Update Fixed Bottom Banner Content
+  if (promoBanner) {
+    const tagTextEl = document.getElementById('banner-tag-text');
+    const highlightEl = document.getElementById('banner-text-highlight');
+    const pricingEl = document.getElementById('banner-pricing');
+    const bannerBtnTextEl = document.getElementById('banner-btn-text');
+    const bannerCtaBtn = document.getElementById('promo-banner-cta');
+
+    if (tagTextEl) tagTextEl.textContent = currentPromo.bannerTagText;
+    if (highlightEl) highlightEl.textContent = currentPromo.bannerHighlightText;
+    if (pricingEl) pricingEl.innerHTML = currentPromo.bannerPricingHtml;
+    if (bannerBtnTextEl) bannerBtnTextEl.textContent = currentPromo.bannerBtnText;
+
+    if (bannerCtaBtn) {
+      bannerCtaBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (enrollmentModal) {
+          enrollmentModal.style.display = 'flex';
+          enrollmentModal.offsetHeight;
+          enrollmentModal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+        }
+      });
+    }
+  }
+
+  // 3. Update Pricing Section on the page
+  const sectionPriceVal = document.getElementById('section-price-val');
+  const sectionPriceDetail = document.getElementById('section-price-detail');
+  if (sectionPriceVal) sectionPriceVal.textContent = currentPromo.priceCurrent;
+  if (sectionPriceDetail) sectionPriceDetail.textContent = `ou em até 12x de ${currentPromo.installments}`;
+
+  // 4. Live Countdown Logic for both Pop-up and Fixed Banner
+  const popupDays = document.getElementById('popup-days');
+  const popupHours = document.getElementById('popup-hours');
+  const popupMinutes = document.getElementById('popup-minutes');
+  const popupSeconds = document.getElementById('popup-seconds');
+
+  const bannerDays = document.getElementById('banner-days');
+  const bannerHours = document.getElementById('banner-hours');
+  const bannerMinutes = document.getElementById('banner-minutes');
+  const bannerSeconds = document.getElementById('banner-seconds');
+
+  function updateTimers() {
+    const now = new Date();
+    const active = getCurrentPromo();
+    const diff = active.deadline.getTime() - now.getTime();
 
     if (diff <= 0) {
-      hoursEl.textContent = '00';
-      minutesEl.textContent = '00';
-      secondsEl.textContent = '00';
+      const zeros = '00';
+      if (popupDays) popupDays.textContent = zeros;
+      if (popupHours) popupHours.textContent = zeros;
+      if (popupMinutes) popupMinutes.textContent = zeros;
+      if (popupSeconds) popupSeconds.textContent = zeros;
+
+      if (bannerDays) bannerDays.textContent = zeros;
+      if (bannerHours) bannerHours.textContent = zeros;
+      if (bannerMinutes) bannerMinutes.textContent = zeros;
+      if (bannerSeconds) bannerSeconds.textContent = zeros;
       return;
     }
 
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const m = Math.floor((diff / (1000 * 60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
 
-    hoursEl.textContent = String(hours).padStart(2, '0');
-    minutesEl.textContent = String(minutes).padStart(2, '0');
-    secondsEl.textContent = String(seconds).padStart(2, '0');
+    const dStr = String(d).padStart(2, '0');
+    const hStr = String(h).padStart(2, '0');
+    const mStr = String(m).padStart(2, '0');
+    const sStr = String(s).padStart(2, '0');
+
+    if (popupDays) popupDays.textContent = dStr;
+    if (popupHours) popupHours.textContent = hStr;
+    if (popupMinutes) popupMinutes.textContent = mStr;
+    if (popupSeconds) popupSeconds.textContent = sStr;
+
+    if (bannerDays) bannerDays.textContent = dStr;
+    if (bannerHours) bannerHours.textContent = hStr;
+    if (bannerMinutes) bannerMinutes.textContent = mStr;
+    if (bannerSeconds) bannerSeconds.textContent = sStr;
   }
 
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
-})();
+  updateTimers();
+  setInterval(updateTimers, 1000);
+}

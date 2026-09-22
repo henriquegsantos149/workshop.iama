@@ -2411,16 +2411,22 @@ a {
   color: #fff;
 }
 
+.modal-header {
+  text-align: center;
+}
+
 .modal-header h2 {
   font-size: 1.75rem;
   margin-bottom: 8px;
   color: #fff;
+  text-align: center;
 }
 
 .modal-header p {
   font-size: 0.85rem;
   margin-bottom: 24px;
   color: var(--color-text-muted-light);
+  text-align: center;
 }
 
 /* FAQ WhatsApp Support CTA */
@@ -2521,4 +2527,416 @@ a {
   text-align: center !important;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* ==========================================================================
+   Promotional Discount Pop-up Modal
+   ========================================================================== */
+.promo-popup-modal {
+  z-index: 2500 !important;
+}
+
+.promo-modal-card {
+  max-width: 500px !important;
+  text-align: center;
+  padding: 36px 28px !important;
+  background: rgba(4, 20, 29, 0.97) !important;
+  border: 1px solid rgba(140, 238, 44, 0.25) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 35px rgba(140, 238, 44, 0.18) !important;
+}
+
+.promo-modal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(140, 238, 44, 0.12);
+  border: 1px solid rgba(140, 238, 44, 0.35);
+  color: var(--color-accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  margin-bottom: 16px;
+  box-shadow: 0 0 15px rgba(140, 238, 44, 0.15);
+}
+
+.promo-modal-title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1.25;
+  margin-bottom: 12px;
+  color: #ffffff;
+}
+
+.promo-modal-desc {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--color-text-muted-light);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.promo-strikethrough {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+  opacity: 0.75;
+}
+
+.promo-highlight-price {
+  color: var(--color-accent);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.promo-timer-box {
+  background: rgba(0, 13, 20, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin-bottom: 22px;
+}
+
+.promo-timer-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin-bottom: 10px;
+}
+
+.promo-timer-title i,
+.promo-timer-title svg {
+  width: 14px;
+  height: 14px;
+  color: var(--color-accent);
+}
+
+.promo-countdown-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.promo-time-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  min-width: 54px;
+  padding: 6px 4px;
+}
+
+.promo-time-unit .unit-number {
+  font-family: var(--font-title);
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.promo-time-unit .unit-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-top: 3px;
+}
+
+.unit-sep {
+  font-family: var(--font-title);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.promo-modal-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.promo-guarantee-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.promo-guarantee-note i,
+.promo-guarantee-note svg {
+  width: 14px;
+  height: 14px;
+  color: var(--color-accent);
+}
+
+/* ==========================================================================
+   Fixed Bottom Promotion Countdown Banner
+   ========================================================================== */
+body {
+  padding-bottom: 74px !important;
+}
+
+.promo-fixed-banner {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  z-index: 1999 !important;
+  background: rgba(3, 17, 26, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(140, 238, 44, 0.35);
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.5), 0 -2px 15px rgba(140, 238, 44, 0.12);
+  padding: 10px 0;
+  transition: transform var(--transition-normal);
+}
+
+.promo-banner-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.promo-banner-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.promo-banner-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(124, 191, 57, 0.25), rgba(140, 238, 44, 0.25));
+  border: 1px solid rgba(140, 238, 44, 0.5);
+  color: var(--color-accent);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  background-color: var(--color-accent);
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+
+.promo-banner-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+  color: #ffffff;
+}
+
+.promo-banner-highlight {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.promo-banner-pricing {
+  color: var(--color-text-muted-light);
+}
+
+.promo-banner-pricing del {
+  opacity: 0.7;
+}
+
+.promo-banner-pricing strong {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.promo-banner-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.promo-banner-timer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 10, 16, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 14px;
+  border-radius: 8px;
+}
+
+.banner-timer-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.banner-timer-label i,
+.banner-timer-label svg {
+  width: 13px;
+  height: 13px;
+  color: #ff9800;
+}
+
+.banner-countdown {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.b-unit {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.b-val {
+  font-family: var(--font-title);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.b-lbl {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin-left: 1px;
+  text-transform: uppercase;
+}
+
+.b-sep {
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.3);
+  margin: 0 1px;
+}
+
+.promo-banner-btn {
+  padding: 8px 18px !important;
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+  white-space: nowrap !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+.promo-banner-btn i,
+.promo-banner-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+  .promo-banner-container {
+    gap: 12px;
+  }
+  .promo-banner-highlight {
+    font-size: 0.85rem;
+  }
+  .promo-banner-pricing {
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 860px) {
+  body {
+    padding-bottom: 110px !important;
+  }
+  .promo-fixed-banner {
+    padding: 8px 0;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+  .promo-banner-container {
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 16px;
+  }
+  .promo-banner-info {
+    width: 100%;
+    justify-content: center;
+    gap: 8px;
+  }
+  .promo-banner-text {
+    font-size: 0.82rem;
+    justify-content: center;
+    text-align: center;
+  }
+  .promo-banner-controls {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .promo-banner-timer {
+    padding: 5px 10px;
+    gap: 6px;
+  }
+  .promo-banner-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 8px 14px !important;
+    font-size: 0.82rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  body {
+    padding-bottom: 120px !important;
+  }
+  .promo-modal-card {
+    padding: 28px 18px !important;
+  }
+  .promo-modal-title {
+    font-size: 1.35rem;
+  }
+  .promo-modal-desc {
+    font-size: 0.88rem;
+  }
+  .promo-time-unit {
+    min-width: 46px;
+    padding: 4px 2px;
+  }
+  .promo-time-unit .unit-number {
+    font-size: 1.2rem;
+  }
+  .promo-banner-tag {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+  .banner-timer-label {
+    display: none;
+  }
 }
