@@ -659,39 +659,39 @@ function initCarousels() {
 
 const PROMO_CONFIG = {
   phase1: {
-    // Until 30/09 23:59:59 Brasília Time (UTC-3)
-    deadline: new Date('2026-09-30T23:59:59-03:00'),
+    // Until 09/10 23:59:59 Brasília Time (UTC-3)
+    deadline: new Date('2026-10-09T23:59:59-03:00'),
     discountAmount: '200',
     discountFormatted: 'R$ 200',
     priceOriginal: '497,00',
     priceCurrent: '297,00',
     installments: 'R$ 29,70',
-    dateLabel: '30/09',
+    dateLabel: '09/10',
     badgeText: '⚡ CONDIÇÃO ESPECIAL DE LANÇAMENTO',
     titleDiscount: 'R$ 200 de Desconto',
-    modalDescHtml: 'Aproveite o valor promocional exclusivo de <span class="promo-strikethrough">R$ 497,00</span> por apenas <strong class="promo-highlight-price">R$ 297,00</strong> (ou 12x de R$ 29,70). Válido até o dia <strong>30/09</strong>!',
+    modalDescHtml: 'Aproveite o valor promocional exclusivo de <span class="promo-strikethrough">R$ 497,00</span> por apenas <strong class="promo-highlight-price">R$ 297,00</strong> (ou 12x de R$ 29,70). Válido até o dia <strong>09/10</strong>!',
     modalCtaText: 'Garantir R$ 200 de Desconto',
     bannerTagText: 'R$ 200 OFF',
-    bannerHighlightText: 'Valor Promocional até 30/09:',
+    bannerHighlightText: 'Valor Promocional até 09/10:',
     bannerPricingHtml: 'De <del>R$ 497</del> por apenas <strong>R$ 297</strong> (ou 12x de R$ 29,70)',
     bannerBtnText: 'Garantir Desconto',
     checkoutUrl: 'https://pay.voompcreators.com.br/0OL0RYRjOIhiJwBj/offer/zuifLN/?cupom=WORKSHOPIA200'
   },
   phase2: {
-    // From 01/10 00:00:00 to 07/10 23:59:59 Brasília Time (UTC-3)
-    deadline: new Date('2026-10-07T23:59:59-03:00'),
+    // From 10/10 00:00:00 to 16/10 23:59:59 Brasília Time (UTC-3)
+    deadline: new Date('2026-10-16T23:59:59-03:00'),
     discountAmount: '100',
     discountFormatted: 'R$ 100',
     priceOriginal: '497,00',
     priceCurrent: '397,00',
     installments: 'R$ 39,70',
-    dateLabel: '07/10',
+    dateLabel: '16/10',
     badgeText: '⚡ SEGUNDO LOTE PROMOCIONAL',
     titleDiscount: 'R$ 100 de Desconto',
-    modalDescHtml: 'Aproveite o valor promocional de <span class="promo-strikethrough">R$ 497,00</span> por apenas <strong class="promo-highlight-price">R$ 397,00</strong> (ou 12x de R$ 39,70). Válido até o dia <strong>07/10</strong>!',
+    modalDescHtml: 'Aproveite o valor promocional de <span class="promo-strikethrough">R$ 497,00</span> por apenas <strong class="promo-highlight-price">R$ 397,00</strong> (ou 12x de R$ 39,70). Válido até o dia <strong>16/10</strong>!',
     modalCtaText: 'Garantir R$ 100 de Desconto',
     bannerTagText: 'R$ 100 OFF',
-    bannerHighlightText: 'Valor Promocional até 07/10:',
+    bannerHighlightText: 'Valor Promocional até 16/10:',
     bannerPricingHtml: 'De <del>R$ 497</del> por apenas <strong>R$ 397</strong> (ou 12x de R$ 39,70)',
     bannerBtnText: 'Garantir Desconto',
     checkoutUrl: 'https://pay.voompcreators.com.br/0OL0RYRjOIhiJwBj/offer/zuifLN?cupom=WORKSHOPIA100'
