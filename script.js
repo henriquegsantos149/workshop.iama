@@ -663,38 +663,38 @@ const PROMO_CONFIG = {
     deadline: new Date('2026-10-09T23:59:59-03:00'),
     discountAmount: '200',
     discountFormatted: 'R$ 200',
-    priceOriginal: '497,00',
+    priceOriginal: '197,00',
     priceCurrent: '297,00',
     installments: 'R$ 29,70',
     dateLabel: '09/10',
     badgeText: '⚡ CONDIÇÃO ESPECIAL DE LANÇAMENTO',
     titleDiscount: 'R$ 200 de Desconto',
-    modalDescHtml: 'Aproveite o valor promocional exclusivo de <span class="promo-strikethrough">R$ 497,00</span> por apenas <strong class="promo-highlight-price">R$ 297,00</strong> (ou 12x de R$ 29,70). Válido até o dia <strong>09/10</strong>!',
+    modalDescHtml: 'Aproveite o valor promocional exclusivo de <span class="promo-strikethrough">R$ 197,00</span> por apenas <strong class="promo-highlight-price">R$ 297,00</strong> (ou 12x de R$ 29,70). Válido até o dia <strong>09/10</strong>!',
     modalCtaText: 'Garantir R$ 200 de Desconto',
     bannerTagText: 'R$ 200 OFF',
     bannerHighlightText: 'Valor Promocional até 09/10:',
-    bannerPricingHtml: 'De <del>R$ 497</del> por apenas <strong>R$ 297</strong> (ou 12x de R$ 29,70)',
+    bannerPricingHtml: 'De <del>R$ 197</del> por apenas <strong>R$ 297</strong> (ou 12x de R$ 29,70)',
     bannerBtnText: 'Garantir Desconto',
-    checkoutUrl: 'https://pay.voompcreators.com.br/0OL0RYRjOIhiJwBj/offer/zuifLN/?cupom=WORKSHOPIA200'
+    checkoutUrl: 'https://pay.voompcreators.com.br/0OL0RYRjOIhiJwBj/offer/gEiYLW'
   },
   phase2: {
     // From 10/10 00:00:00 to 16/10 23:59:59 Brasília Time (UTC-3)
     deadline: new Date('2026-10-16T23:59:59-03:00'),
     discountAmount: '100',
     discountFormatted: 'R$ 100',
-    priceOriginal: '497,00',
+    priceOriginal: '197,00',
     priceCurrent: '397,00',
     installments: 'R$ 39,70',
     dateLabel: '16/10',
     badgeText: '⚡ SEGUNDO LOTE PROMOCIONAL',
     titleDiscount: 'R$ 100 de Desconto',
-    modalDescHtml: 'Aproveite o valor promocional de <span class="promo-strikethrough">R$ 497,00</span> por apenas <strong class="promo-highlight-price">R$ 397,00</strong> (ou 12x de R$ 39,70). Válido até o dia <strong>16/10</strong>!',
+    modalDescHtml: 'Aproveite o valor promocional de <span class="promo-strikethrough">R$ 197,00</span> por apenas <strong class="promo-highlight-price">R$ 397,00</strong> (ou 12x de R$ 39,70). Válido até o dia <strong>16/10</strong>!',
     modalCtaText: 'Garantir R$ 100 de Desconto',
     bannerTagText: 'R$ 100 OFF',
     bannerHighlightText: 'Valor Promocional até 16/10:',
-    bannerPricingHtml: 'De <del>R$ 497</del> por apenas <strong>R$ 397</strong> (ou 12x de R$ 39,70)',
+    bannerPricingHtml: 'De <del>R$ 197</del> por apenas <strong>R$ 397</strong> (ou 12x de R$ 39,70)',
     bannerBtnText: 'Garantir Desconto',
-    checkoutUrl: 'https://pay.voompcreators.com.br/0OL0RYRjOIhiJwBj/offer/zuifLN?cupom=WORKSHOPIA100'
+    checkoutUrl: 'https://pay.voompcreators.com.br/0OL0RYRjOIhiJwBj/offer/gEiYLW'
   }
 };
 
@@ -705,7 +705,7 @@ function getCurrentPromo() {
   } else if (now <= PROMO_CONFIG.phase2.deadline) {
     return { phase: 2, ...PROMO_CONFIG.phase2 };
   } else {
-    return { phase: 3, expired: true, ...PROMO_CONFIG.phase2 };
+    return { ...PROMO_CONFIG.phase2, phase: 3, expired: true, priceCurrent: '9,70' };
   }
 }
 
@@ -716,7 +716,11 @@ function initPromotionManager() {
   
   const currentPromo = getCurrentPromo();
 
-  // If promotion completely expired after Oct 7th
+  // Keep the current price updated even after the timed campaigns end.
+  const priceValue = document.getElementById('section-price-val');
+  if (priceValue) priceValue.textContent = currentPromo.priceCurrent;
+
+  // Hide expired promotional campaigns.
   if (currentPromo.expired) {
     if (promoBanner) promoBanner.style.display = 'none';
     if (promoModal) promoModal.style.display = 'none';
